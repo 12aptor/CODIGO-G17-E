@@ -9,7 +9,6 @@ def suma(a, b):
 
 print(suma(2, 3))
 
-
 def mi_funcion(a):
     print(a)
 
