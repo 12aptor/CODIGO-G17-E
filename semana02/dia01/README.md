@@ -53,3 +53,15 @@ def index():
 ```bash
 flask run
 ```
+
+## Crear nuestro requirements.txt
+
+```bash
+pip freeze > requirements.txt
+```
+
+## Crear el archivo runtime.txt
+
+```bash 
+python-3.8.5
+```
