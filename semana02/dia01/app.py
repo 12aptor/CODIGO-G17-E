@@ -1,8 +1,12 @@
 # Importar flask
 from flask import Flask, render_template, request
+from flask_cors import CORS
 
 # Crear una instancia de Flask
 app = Flask(__name__)
+
+# Habilitar CORS
+cors = CORS(app)
 
 # Crear una ruta
 @app.route('/')
@@ -22,6 +26,21 @@ def usuario():
         'nombre': 'Juan',
         'apellido': 'Pérez',
     }
+
+@app.route('/usuarios')
+def usuarios():
+    return [
+        {
+            'id': 1,
+            'nombre': 'Juan',
+            'apellido': 'Pérez',
+        },
+        {
+            'id': 2,
+            'nombre': 'María',
+            'apellido': 'Gómez',
+        }
+    ]
 
 # Podemos recibir parámetros
 @app.route('/cliente/<name>')

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integración API Flask</title>
+  </head>
+  <body>
+    <h1>Integración API Flask</h1>
+    <ul id="users_list"></ul>
+
+    <script>
+      const getUsers = async () => {
+        const response = await fetch("http://127.0.0.1:5000/usuarios");
+        const json = await response.json();
+
+        const users_list = document.getElementById("users_list");
+
+        json.forEach((user) => {
+          const li = document.createElement("li");
+          li.appendChild(document.createTextNode(user.nombre));
+          users_list.appendChild(li);
+        });
+      };
+
+      getUsers();
+    </script>
+  </body>
+</html>
