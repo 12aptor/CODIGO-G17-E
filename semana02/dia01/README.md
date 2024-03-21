@@ -46,9 +46,16 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return 'Hola mundo! 😎'
+
+if __name__ == '__main__':
+    app.run(debug=True)
 ```
 
 ## Ejecución de la aplicación
+
+```bash
+python app.py
+```
 
 ```bash
 flask run

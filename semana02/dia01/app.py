@@ -1,5 +1,5 @@
 # Importar flask
-from flask import Flask
+from flask import Flask, render_template
 
 # Crear una instancia de Flask
 app = Flask(__name__)
@@ -33,6 +33,16 @@ def cliente(name):
 def producto(id):
     return f'<h1>Producto {id}</h1>'
 
+# Métodos HTTP (GET, POST, PUT, DELETE, PATCH, OPTIONS)
+@app.route('/saludo', methods=['GET', 'POST'])
+def saludo():
+    return 'Hola mundo! 😄'
+
+# Plantillas (tener una carpeta templates)
+@app.route('/template')
+def template():
+    username = 'Pepito'
+    return render_template('index.html', username= username)
 
 
 if __name__ == '__main__':
