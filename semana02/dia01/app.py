@@ -1,5 +1,5 @@
 # Importar flask
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 # Crear una instancia de Flask
 app = Flask(__name__)
@@ -44,6 +44,27 @@ def template():
     username = 'Pepito'
     return render_template('index.html', username= username)
 
+@app.route('/login', methods=['POST'])
+def login():
+    # Recuperar la ruta
+    path = request.path
+    print(path)
+
+    # Recuperar el método
+    method = request.method
+    print(method)
+
+    # Recuperar archivos
+    # file = request.files['foto']
+    # print(file)
+
+    # Recuperar datos del formdata
+    # name = request.form['nombre']
+    # print(name)
+
+    # Recuperar el body
+    json = request.get_json()
+    return json, 200
 
 if __name__ == '__main__':
     app.run(debug=True)
