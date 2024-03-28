@@ -29,6 +29,7 @@ source nombre_entorno/Scripts/activate
 pip install Flask
 pip install Flask-SQLAlchemy
 pip install Flask-Migrate
+pip install psycopg2-binary
 ```
 
 

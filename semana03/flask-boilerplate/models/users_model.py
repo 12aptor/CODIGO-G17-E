@@ -14,3 +14,14 @@ class UserModel(db.Model):
 
     def __repr__(self) -> str:
         return '<User %r>' % self.name
+    
+    def toJson(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'document_type': self.document_type,
+            'document_number': self.document_number,
+            'email': self.email,
+            'password': self.password,
+            'status': self.status
+        }
