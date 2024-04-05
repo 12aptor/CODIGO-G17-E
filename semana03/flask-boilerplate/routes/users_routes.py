@@ -14,3 +14,9 @@ def createUser():
     json = request.get_json()
     controller = UserController()
     return controller.create(json)
+
+@api_bp.route('/users/update/<int:id>', methods=['PUT'])
+def updateUser(id):
+    json = request.get_json()
+    controller = UserController()
+    return controller.update(id, json)

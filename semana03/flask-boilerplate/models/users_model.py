@@ -25,3 +25,17 @@ class UserModel(db.Model):
             'password': self.password,
             'status': self.status
         }
+    
+    def update(self, data):
+        if data.name is not None:
+            self.name = data.name
+        if data.document_type is not None:
+            self.document_type = data.document_type
+        if data.document_number is not None:
+            self.document_number = data.document_number
+        if data.email is not None:
+            self.email = data.email
+        if data.password is not None:
+            self.password = data.password
+        if data.status is not None:
+            self.status = data.status
