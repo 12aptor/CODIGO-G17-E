@@ -1,5 +1,8 @@
 from models.users_model import UserModel
 from db import db
+from pydantic import ValidationError
+from schemas.users_schema import UserSchema
+import bcrypt
 
 class UserController:
     def __init__(self):
@@ -7,10 +10,11 @@ class UserController:
 
     def getAll(self):
         record = self.model().query.all()
+
         response = []
         for user in record:
             response.append(user.toJson())
-        
+
         return response, 200
 
     def getById(self):
@@ -18,19 +22,23 @@ class UserController:
         pass
 
     def create(self, json):
-        record = self.model(
-                    name=json['name'],
-                    document_type=json['document_type'],
-                    document_number=json['document_number'],
-                    email=json['email'],
-                    password=json['password'],
-                    status=json['status']
-                )
+        try:
+            user = UserSchema(**json)
+            user.password = self.__hashPassword(user.password)
+            record = self.model(**user.__dict__)
+            
+            db.session.add(record)
+            db.session.commit()
+            return record.toJson(), 201
         
-        db.session.add(record)
-        db.session.commit()
-
-        return record.toJson(), 201
+        except ValidationError as e:
+            return {
+                'errors': e.errors()
+            }
+        except Exception as e:
+            return {
+                'errors': e.args
+            }
     
     def update(self):
         pass
@@ -38,5 +46,7 @@ class UserController:
     def delete(self):
         pass
 
-    def __hashPassword(self):
-        pass
+    def __hashPassword(self, password):
+        pwdBytes = password.encode()
+        pwdHash = bcrypt.hashpw(pwdBytes, bcrypt.gensalt())
+        return pwdHash.decode()

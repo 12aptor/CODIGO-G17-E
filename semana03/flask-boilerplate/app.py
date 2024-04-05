@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from db import db
 from flask_migrate import Migrate
 from routes.users_routes import api_bp
@@ -10,6 +10,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 app.register_blueprint(api_bp, url_prefix='/api')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
