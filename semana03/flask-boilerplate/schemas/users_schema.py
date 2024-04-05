@@ -15,3 +15,7 @@ class UpdateUserSchema(BaseModel):
     email: str | None = None
     password: str | None = None
     status: bool | None = None
+
+class LoginUserSchema(BaseModel):
+    email: str
+    password: str

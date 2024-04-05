@@ -10,14 +10,14 @@ class UserController:
 
     def getAll(self):
         try:
-            record = self.model().query.all()
+            record = self.model().query.order_by(self.model.id).all()
             response = [user.toJson() for user in record]
             return response, 200
         
         except Exception as e:
             return {
                 'errors': str(e)
-            }
+            }, 500
 
     def create(self, json):
         try:
@@ -32,14 +32,14 @@ class UserController:
         except ValidationError as e:
             return {
                 'errors': e.errors()
-            }
+            }, 400
         except Exception as e:
             db.session.rollback()
             return {
                 'errors': str(e)
-            }
+            }, 500
     
-    def update(self, id, json):
+    def update(self, id: int, json):
         try:
             record = self.model().query.get(id)
 
@@ -53,28 +53,51 @@ class UserController:
             
             record.update(user)
             db.session.commit()
-
-            return {
-                'ok': True
-            }
+            return record.toJson(), 200
+        
         except ValidationError as e:
             return {
                 'errors': e.errors()
-            }
+            }, 400
         except Exception as e:
             db.session.rollback()
             return {
                 'errors': str(e)
-            }
+            }, 500
 
-    def delete(self):
-        pass
+    def delete(self, id: int):
+        try:
+            record = self.model().query.get(id)
 
-    def getById(self):
-        # Logica para retornar un usuario por id
-        pass
+            if record is None:
+                raise Exception('User not found')
+            
+            db.session.delete(record)
+            db.session.commit()
+            return {
+                'message': 'User deleted successfully'
+            }, 200
+        
+        except Exception as e:
+            return {
+                'errors': str(e)
+            }, 500
+
+    def getById(self, id: int):
+        try:
+            record = self.model().query.get(id)
+
+            if record is None:
+                raise Exception('User not found')
+            
+            return record.toJson(), 200
+        
+        except Exception as e:
+            return {
+                'errors': str(e)
+            }, 500
 
     def __hashPassword(self, password):
-        pwdBytes = password.encode()
+        pwdBytes = password.encode('utf-8')
         pwdHash = bcrypt.hashpw(pwdBytes, bcrypt.gensalt())
         return pwdHash.decode()
