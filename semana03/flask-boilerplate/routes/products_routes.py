@@ -18,17 +18,19 @@ def getAllProducts():
     return controller.getAll()
 
 @products_bp.route('/products/update/<int:id>', methods=['PUT'])
+@jwt_required()
 def updateProduct(id):
     json = request.get_json()
     controller = ProductController()
     return controller.update(id, json)
 
 @products_bp.route('/products/delete/<int:id>', methods=['DELETE'])
+@jwt_required()
 def deleteProduct(id):
     controller = ProductController()
     return controller.delete(id)
 
-@products_bp.route('/products/<int:id>')
+@products_bp.route('/products/by-id/<int:id>')
 def getById(id):
     controller = ProductController()
     return controller.getById(id)
