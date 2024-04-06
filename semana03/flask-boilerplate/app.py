@@ -3,6 +3,7 @@ from db import db
 from flask_migrate import Migrate
 from routes.users_routes import user_bp
 from routes.auth_routes import auth_bp
+from routes.products_routes import products_bp
 from config import Config
 from flask_jwt_extended import JWTManager
 
@@ -14,6 +15,7 @@ jwt = JWTManager(app)
 
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(auth_bp, url_prefix='/api')
+app.register_blueprint(products_bp, url_prefix='/api')
 
 
 if __name__ == '__main__':
