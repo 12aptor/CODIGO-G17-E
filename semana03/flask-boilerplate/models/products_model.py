@@ -33,3 +33,15 @@ class ProductModel(db.Model):
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
+    
+    def update(self, data):
+        if data.name is not None:
+            self.name = data.name
+        if data.description is not None:
+            self.description = data.description
+        if data.price is not None:
+            self.price = data.price
+        if data.stock is not None:
+            self.stock = data.stock
+        if data.status is not None:
+            self.status = data.status
