@@ -68,8 +68,19 @@ flask db migrate -m "Un mensaje"
 flask db upgrade
 ```
 
-## Creación del flujo de trabajo
+## Flujo de creación del proyecto
 
 - Crear los modelos (contiene la estructura de la base de datos)
 - Crear los controladores (contiene toda la lógica de la aplicación)
+- Crear los schemas (contiene la serialización y/o validacion de los datos)
 - Crear las rutas (contiene las rutas de la aplicación)
+- Importar las rutas en el archivo principal (app.py) 
+
+
+## Flujo de funcionaiento de la aplicación
+- Se llama a una ruta
+- Se ejecuta la función asociada a la ruta (métodos)
+- Se procesa la información (en los controladores)
+- Se guarda o extrae información de la base de datos (en los modelos)
+- Se serializa la información (en los schemas o en los modelos)
+- Se retorna la información (en los controladores)

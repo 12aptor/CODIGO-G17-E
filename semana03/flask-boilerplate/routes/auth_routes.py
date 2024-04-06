@@ -8,3 +8,9 @@ def login():
     json = request.get_json()
     controller = AuthController()
     return controller.login(json)
+
+@auth_bp.route('/auth/signup', methods=['POST'])
+def signup():
+    json = request.get_json()
+    controller = AuthController()
+    return controller.signup(json)
