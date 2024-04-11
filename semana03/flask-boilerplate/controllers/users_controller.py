@@ -96,6 +96,19 @@ class UserController:
             return {
                 'errors': str(e)
             }, 500
+        
+    def getByName(self, name: str):
+        try:
+            # users = self.model().query.filter(self.model.name.endswith(name)).all()
+            # users = self.model().query.filter(self.model.name.startswith(name)).all()
+            # users = self.model().query.filter(self.model.name.contains(name)).all()
+            users = self.model().query.filter(self.model.name.like(f'%{name}%')).all()
+            response = [user.toJson() for user in users]
+            return response, 200
+        except Exception as e:
+            return {
+                'errors': str(e)
+            }, 500
 
     def __hashPassword(self, password):
         pwdBytes = password.encode('utf-8')

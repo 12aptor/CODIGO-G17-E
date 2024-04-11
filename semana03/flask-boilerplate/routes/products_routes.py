@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from controllers.products_controller import ProductController
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 products_bp = Blueprint('products', __name__)
@@ -8,6 +8,12 @@ products_bp = Blueprint('products', __name__)
 @products_bp.route('/products/create', methods=['POST'])
 @jwt_required()
 def createProduct():
+    current_user = get_jwt_identity()
+    if(current_user['role'] != 'ADMIN'):
+        return {
+            'msg': 'Unauthorized'
+        }, 401
+    
     json = request.get_json()
     controller = ProductController()
     return controller.create(json)

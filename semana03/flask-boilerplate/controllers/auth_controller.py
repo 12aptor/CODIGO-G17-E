@@ -22,9 +22,14 @@ class AuthController:
 
             if not checkPwd:
                 raise Exception('Invalid credentials')
+            
+            userIdentity = {
+                'id': record.id,
+                'role': "ADMIN"
+            }
 
-            accessToken = create_access_token(identity=record.id, additional_claims={'ok': True})
-            refreshToken = create_refresh_token(identity=record.id)
+            accessToken = create_access_token(identity=userIdentity, additional_claims={'ok': True})
+            refreshToken = create_refresh_token(identity=userIdentity)
 
             return {
                 'access_token': accessToken,

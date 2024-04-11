@@ -32,3 +32,8 @@ def deleteUser(id):
 def getUserById(id):
     controller = UserController()
     return controller.getById(id)
+
+@user_bp.route('/users/by-name/<string:name>')
+def getUserByName(name):
+    controller = UserController()
+    return controller.getByName(name)
