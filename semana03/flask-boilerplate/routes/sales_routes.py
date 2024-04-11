@@ -9,3 +9,8 @@ def createSale():
     json = request.get_json()
     controller = SaleController()
     return controller.create(json)
+
+@sales_bp.route('/sales/all', methods=['GET'])
+def getAllSales():
+    controller = SaleController()
+    return controller.getAll()

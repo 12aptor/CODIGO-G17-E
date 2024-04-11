@@ -55,3 +55,13 @@ class SaleController:
             return {
                 'errors': str(e),
             }, 500
+        
+    def getAll(self):
+        try:
+            sales = self.sale_model.query.order_by(self.sale_model.id.desc()).all()
+            response = [sale.toJson() for sale in sales]
+            return response, 200
+        except Exception as e:
+            return {
+                'errors': str(e),
+            }, 500
