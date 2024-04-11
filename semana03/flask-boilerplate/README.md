@@ -23,6 +23,12 @@ nombre_entorno\Scripts\activate
 source nombre_entorno/Scripts/activate
 ```
 
+## Si existe un archivo requirements.txt
+
+```bash
+pip install -r requirements.txt
+```
+
 ## Instalación de Flask
 
 ```bash
