@@ -3,6 +3,8 @@ from app import app
 from flask import Flask
 
 jwt = None
+user_email = None
+user_password = None
 
 @pytest.fixture
 def client():
@@ -10,10 +12,27 @@ def client():
     client = app.test_client()
     yield client
 
+def test_signup(client: Flask):
+    json = {
+        "name": "John Doe",
+        "document_type": "DNI",
+        "document_number": "87654321",
+        "email": "john@gmail.com",
+        "password": "johnjohn",
+        "status": False
+    }
+    response = client.post('/api/auth/signup', json=json)
+
+    assert response.status_code == 201
+    global user_email
+    global user_password
+    user_email = json['email']
+    user_password = json['password']
+
 def test_login(client: Flask):
     response = client.post('/api/auth/login', json = {
-        "email": "john@gmail.com",
-	    "password": "johnjohn"
+        "email": user_email,
+	    "password": user_password
     })
 
     assert response.status_code == 200
@@ -28,9 +47,8 @@ def test_products_get(client: Flask):
     assert type(response.json) == list
 
 def test_products_post(client: Flask):
-    token = jwt
     headers = {
-        'Authorization': f'Bearer {token}'
+        'Authorization': f'Bearer {jwt}'
     }
     response = client.post('/api/products/create', json = {
         "name": "Zapatillas Puma",

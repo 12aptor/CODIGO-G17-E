@@ -74,6 +74,13 @@ flask db migrate -m "Un mensaje"
 flask db upgrade
 ```
 
+## Test de la aplicación
+
+```bash
+pytest
+pytest -vv
+```
+
 ## Flujo de creación del proyecto
 
 - Crear los modelos (contiene la estructura de la base de datos)
