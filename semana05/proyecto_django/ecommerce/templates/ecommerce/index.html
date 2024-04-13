@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Ecommerce</title>
+</head>
+<body>
+    <h1>Ecommerce Pablito</h1>
+    <h2>Lista de productos</h2>
+    <ul>
+        {% for product in products %}
+            <li>{{ product.name }} - {{ product.price }}</li>    
+        {% endfor %}
+    </ul>
+    <button type="button" id="button">Dame click</button>
+
+    <script>
+        const button = document.getElementById('button');
+
+        button.addEventListener('click', () => {
+            alert('Hola, acabas de dar click en el botón');
+        })
+    </script>
+</body>
+</html>

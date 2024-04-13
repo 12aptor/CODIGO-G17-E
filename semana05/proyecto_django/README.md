@@ -16,7 +16,7 @@ django-admin startproject nombre_proyecto .
 python manage.py runserver
 ```
 
-## Ejecutar las migraciones
+## Ejecutar las primeras migraciones
 ```bash
 python manage.py migrate
 ```
@@ -38,4 +38,18 @@ INSTALLED_APPS = [
     'ecommerce',
     ...
 ]
+```
+
+## Migraciones de la aplicación
+```bash
+python manage.py makemigrations nombre_app
+python manage.py migrate
+
+# Verificar las migraciones
+python manage.py showmigrations
+```
+
+## Consultar datos en la terminal
+```bash
+python manage.py shell
 ```
