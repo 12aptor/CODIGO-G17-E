@@ -19,3 +19,21 @@ export const postLogin = async (credentials) => {
     return null;
   }
 };
+
+export const isAuthenticated = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return false;
+  }
+
+  const [, payload] = token.split(".");
+  const payloadDecoded = atob(payload);
+  const payloadJSON = JSON.parse(payloadDecoded);
+
+  if (payloadJSON.exp < Date.now() / 1000) {
+    return false;
+  }
+
+  return true;
+};

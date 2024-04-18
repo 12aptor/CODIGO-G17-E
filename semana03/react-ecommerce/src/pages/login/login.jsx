@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { postLogin } from "../../services/auth_services";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
+  const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -25,6 +27,7 @@ export const Login = () => {
       }
 
       localStorage.setItem("token", response.access_token);
+      navigate("/protected");
     });
   };
 
