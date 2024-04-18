@@ -7,8 +7,8 @@ class UserModel(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     document_type = Column(String(100))
-    document_number = Column(String(20))
-    email = Column(String(200))
+    document_number = Column(String(20), unique=True)
+    email = Column(String(200), unique=True)
     password = Column(String(200))
     status = Column(Boolean)
 
