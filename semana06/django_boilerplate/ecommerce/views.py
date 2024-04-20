@@ -5,6 +5,7 @@ from .serializers import (
     ProductModel,
     ProductUpdateSerializer,
     SaleSerializer,
+    SaleCreateSerializer,
     SaleModel,
     SaleDetailModel
 )
@@ -74,7 +75,7 @@ class SaleView(generics.ListAPIView):
 
 class SaleCreateView(generics.CreateAPIView):
     queryset = SaleModel.objects.all()
-    serializer_class = SaleSerializer
+    serializer_class = SaleCreateSerializer
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):

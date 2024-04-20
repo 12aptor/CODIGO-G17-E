@@ -29,14 +29,27 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         model = ProductModel
         fields = '__all__'
 
+# Serializador para listar ventas
 class SaleDetailSerializer(serializers.ModelSerializer):
-    sale_id = serializers.IntegerField(read_only=True)
     class Meta:
         model = SaleDetailModel
         fields = '__all__'
 
 class SaleSerializer(serializers.ModelSerializer):
-    details = SaleDetailSerializer(many=True)
+    details = SaleDetailSerializer(source='saleDetails', many=True)
+    class Meta:
+        model = SaleModel
+        fields = '__all__'
+
+# Serializador para crear venta
+class SaleDetailCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SaleDetailModel
+        exclude = ['sale_id']
+
+class SaleCreateSerializer(serializers.ModelSerializer):
+    details = SaleDetailCreateSerializer(source='saleDetails', many=True)
+
     class Meta:
         model = SaleModel
         fields = '__all__'
