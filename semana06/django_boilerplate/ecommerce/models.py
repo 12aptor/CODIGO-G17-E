@@ -1,7 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
+from django.contrib.auth.models import AbstractBaseUser
+from .manager import UserManager
 
+class User(AbstractBaseUser):
+    name = models.CharField(max_length=255)
+    document_type = models.CharField(max_length=100)
+    document_number = models.CharField(max_length=100, unique=True)
+    email = models.EmailField(unique=True)
+    status = models.BooleanField(default=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name', 'document_type', 'document_number']
+
+    def __str__(self):
+        return self.email
 
 class ProductModel(models.Model):
     id = models.AutoField(primary_key=True)
