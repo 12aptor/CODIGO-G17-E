@@ -5,9 +5,12 @@ from .serializers import (
     ProductModel,
     ProductUpdateSerializer,
     SaleSerializer,
-    SaleModel
+    SaleModel,
+    SaleDetailModel
 )
+from django.contrib.auth.models import User
 from cloudinary.uploader import upload
+from django.db import transaction
 
 
 class ProductView(generics.ListAPIView):
@@ -73,22 +76,49 @@ class SaleCreateView(generics.CreateAPIView):
     queryset = SaleModel.objects.all()
     serializer_class = SaleSerializer
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         try:
             # Recuperamos los datos de la solicitud
             data = request.data
 
+            serializer = self.serializer_class(data=data)
+            # Validamos los datos
+            serializer.is_valid(raise_exception=True)
+
+            user = User.objects.get(id=data['user_id'])
+
+            # Guardamos la venta
+            sale = SaleModel.objects.create(
+                total=data['total'],
+                user_id=user
+            )
+            sale.save()
+
             # Verificamos si el stock es suficiente
-            for item in data['detail']:
+            for item in data['details']:
                 productId = item['product_id']
                 quantity = item['quantity']
 
                 product = ProductModel.objects.get(id=productId)
                 if product.stock < quantity:
                     raise Exception(f'No hay suficiente stock para el producto {product.name}')
+                
+                product.stock -= quantity
+                product.save()
+
+                # Guardamos el detalle de la venta
+                saleDetail = SaleDetailModel.objects.create(
+                    quantity=quantity,
+                    price=item['price'],
+                    subtotal=item['subtotal'],
+                    product_id=product,
+                    sale_id=sale
+                )
+                saleDetail.save()
 
             return Response({
-                'ok': True
+                'message': 'Venta realizada correctamente'
             }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({

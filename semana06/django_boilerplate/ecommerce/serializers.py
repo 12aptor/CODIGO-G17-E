@@ -30,12 +30,13 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class SaleDetailSerializer(serializers.ModelSerializer):
+    sale_id = serializers.IntegerField(read_only=True)
     class Meta:
         model = SaleDetailModel
         fields = '__all__'
 
 class SaleSerializer(serializers.ModelSerializer):
-    detail = SaleDetailSerializer(many=True)
+    details = SaleDetailSerializer(many=True)
     class Meta:
         model = SaleModel
         fields = '__all__'
