@@ -1,20 +1,21 @@
 from django.db import models
-from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractBaseUser
 from .manager import UserManager
 
-class User(AbstractBaseUser):
+class MyUser(AbstractBaseUser):
     name = models.CharField(max_length=255)
     document_type = models.CharField(max_length=100)
     document_number = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     status = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'document_type', 'document_number']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
@@ -39,7 +40,7 @@ class ProductModel(models.Model):
 class SaleModel(models.Model):
     id = models.AutoField(primary_key=True)
     total = models.FloatField()
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'sales'

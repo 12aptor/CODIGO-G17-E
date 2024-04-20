@@ -46,6 +46,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
 ROOT_URLCONF = 'django_boilerplate.urls'
 
 TEMPLATES = [
@@ -129,4 +135,4 @@ config(
     api_secret= environ.get('CLOUDINARY_API_SECRET')
 )
 
-AUTH_USER_MODEL = 'ecommerce.User'
+AUTH_USER_MODEL = 'ecommerce.MyUser'

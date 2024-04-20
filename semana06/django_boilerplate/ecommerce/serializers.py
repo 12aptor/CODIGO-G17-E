@@ -2,8 +2,41 @@ from rest_framework import serializers
 from .models import (
     ProductModel,
     SaleModel,
-    SaleDetailModel
+    SaleDetailModel,
+    MyUser
 )
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = MyUser
+        fields = '__all__'
+
+    def save(self):
+        name = self.validated_data.get('name')
+        document_type = self.validated_data.get('document_type')
+        document_number = self.validated_data.get('document_number')
+        email = self.validated_data.get('email')
+        password = self.validated_data.get('password')
+
+        user = MyUser(
+            document_type=document_type,
+            document_number=document_number,
+            email=email,
+            name=name,
+        )
+        user.set_password(password)
+        user.save()
+        return user
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['email'] = user.email
+        return token
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
