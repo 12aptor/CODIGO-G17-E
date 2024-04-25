@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import (
     ProductSerializer,
@@ -12,7 +13,6 @@ from .serializers import (
     MyTokenObtainPairSerializer
 )
 from .models import MyUser
-from django.contrib.auth.models import User
 from cloudinary.uploader import upload
 from django.db import transaction
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -121,7 +121,7 @@ class SaleCreateView(generics.CreateAPIView):
             # Validamos los datos
             serializer.is_valid(raise_exception=True)
 
-            user = User.objects.get(id=data['user_id'])
+            user = MyUser.objects.get(id=data['user_id'])
 
             # Guardamos la venta
             sale = SaleModel.objects.create(
@@ -129,6 +129,8 @@ class SaleCreateView(generics.CreateAPIView):
                 user_id=user
             )
             sale.save()
+
+            items = []
 
             # Verificamos si el stock es suficiente
             for item in data['details']:
@@ -152,10 +154,67 @@ class SaleCreateView(generics.CreateAPIView):
                 )
                 saleDetail.save()
 
+                igv = item['price'] * 0.18
+                valor_unitario = item['price']
+                precio_unitario = item['price'] + igv
+                subtotal = item['subtotal']
+
+                items.append({
+                    'unidad_de_medida': 'NIU',
+                    'codigo': 'P001',
+                    'codigo_producto_sunat': '10000000',
+                    'descripcion': product.name,
+                    'cantidad': quantity,
+                    'valor_unitario': valor_unitario,
+                    'precio_unitario': precio_unitario,
+                    'subtotal': subtotal,
+                    'tipo_de_igv': 1,
+                    'igv': igv,
+                    'total': (item['price'] + igv) * quantity,
+                    'anticipo_regularizacion': False
+                })
+
+            body = {
+                'operacion': 'generar_comprobante',
+                'tipo_de_comprobante': 2,
+                'serie': 'BBB1',
+                'numero': 1,
+                'sunat_transaction': 1,
+                'cliente_tipo_de_documento': 1,
+                'cliente_numero_de_documento': '73201471',
+                'cliente_denominacion': 'EMPRESA DE PRUEBA',
+                'cliente_direccion': 'AV. LARCO 1234',
+                'cliente_email': 'email@email.com',
+                'fecha_de_emision': datetime.now().strftime('%d-%m-%Y'),
+                'moneda': 1,
+                'porcentaje_de_igv': 18.0,
+                'total_gravada': 100,
+                'total_igv': 18,
+                'total': 118,
+                'detraccion': False,
+                'enviar_automaticamente_a_la_sunat': True,
+                'enviar_automaticamente_al_cliente': True,
+                'items': items
+            }
+
+            nubeFactResponse = requests.post(
+                url=environ.get('NUBEFACT_URL'),
+                headers={
+                    'Authorization': f'Bearer {environ.get("NUBEFACT_TOKEN")}'
+                },
+                json=body
+            )
+
+            json = nubeFactResponse.json()
+
+            if nubeFactResponse.status_code != 200:
+                raise Exception(json['errors'])
+
             return Response({
                 'message': 'Venta realizada correctamente'
             }, status=status.HTTP_200_OK)
         except Exception as e:
+            transaction.set_rollback(True) # Deshacer la transacción
             return Response({
                 'errors': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -218,13 +277,41 @@ class CreateInvoiceView(generics.GenericAPIView):
                 'Authorization': f'Bearer {token}',
             }, json=invoiceData)
 
-            pprint(nubeFactResponse.json())
-            print(nubeFactResponse.status_code)
+            json = nubeFactResponse.json()
 
+            if nubeFactResponse.status_code != 200:
+                raise Exception(json['errors'])
 
+            return Response(json, status=status.HTTP_200_OK)
+        except Exception as e:
             return Response({
-                'message': 'Factura generada correctamente'
-            }, status=status.HTTP_200_OK)
+                'errors': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class GetInvoiceView(APIView):
+    def get(self, request, tipo_de_comprobante: int, serie: str, numero: int):
+        try:
+            body = {
+                'operacion': 'consultar_comprobante',
+                'tipo_de_comprobante': tipo_de_comprobante,
+                'serie': serie,
+                'numero': numero
+            }
+            nubeFactResponse = requests.post(
+                url=environ.get('NUBEFACT_URL'),
+                headers={
+                    'Authorization': f'Bearer {environ.get("NUBEFACT_TOKEN")}',
+                },
+                json=body
+            )
+
+            json = nubeFactResponse.json()
+
+            if nubeFactResponse.status_code != 200:
+                raise Exception(json['errors'])
+
+            return Response(json, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({
                 'errors': str(e)
