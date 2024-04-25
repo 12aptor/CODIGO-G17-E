@@ -16,7 +16,10 @@ from django.contrib.auth.models import User
 from cloudinary.uploader import upload
 from django.db import transaction
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from os import environ
+import requests
+from datetime import datetime
+from pprint import pprint
 
 class RegisterView(generics.CreateAPIView):
     queryset = MyUser.objects.all()
@@ -29,11 +32,11 @@ class RegisterView(generics.CreateAPIView):
 
             if user:
                 raise Exception('El usuario ya existe')
-            
+        
             serializer = self.serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
-            response = self.serializer_class(serializer).data
+            newUser = serializer.save()
+            response = self.serializer_class(newUser).data
 
             return Response(response, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -164,3 +167,65 @@ class SaleUpdateView(generics.UpdateAPIView):
 class SaleDeleteView(generics.DestroyAPIView):
     queryset = SaleModel.objects.all()
     serializer_class = SaleSerializer
+
+class CreateInvoiceView(generics.GenericAPIView):
+    serializer_class = SaleSerializer
+
+    def post(self, request):
+        try:
+            url = environ.get('NUBEFACT_URL')
+            token = environ.get('NUBEFACT_TOKEN')
+
+            invoiceData = {
+                'operacion': 'generar_comprobante',
+                'tipo_de_comprobante': 2,
+                'serie': 'BBB1',
+                'numero': 1,
+                'sunat_transaction': 1,
+                'cliente_tipo_de_documento': 1,
+                'cliente_numero_de_documento': '73201471',
+                'cliente_denominacion': 'EMPRESA DE PRUEBA',
+                'cliente_direccion': 'AV. LARCO 1234',
+                'cliente_email': 'email@email.com',
+                'fecha_de_emision': datetime.now().strftime('%d-%m-%Y'),
+                'moneda': 1,
+                'porcentaje_de_igv': 18.0,
+                'total_gravada': 100,
+                'total_igv': 18,
+                'total': 118,
+                'detraccion': False,
+                'enviar_automaticamente_a_la_sunat': True,
+                'enviar_automaticamente_al_cliente': True,
+                'items': [
+                    {
+                        'unidad_de_medida': 'NIU',
+                        'codigo': 'P001',
+                        'codigo_producto_sunat': '10000000',
+                        'descripcion': 'ZAPATILLAS PUMBA',
+                        'cantidad': 1,
+                        'valor_unitario': 100,
+                        'precio_unitario': 118,
+                        'subtotal': 100,
+                        'tipo_de_igv': 1,
+                        'igv': 18,
+                        'total': 118,
+                        'anticipo_regularizacion': False
+                    }
+                ]
+            }
+
+            nubeFactResponse = requests.post(url=url, headers={
+                'Authorization': f'Bearer {token}',
+            }, json=invoiceData)
+
+            pprint(nubeFactResponse.json())
+            print(nubeFactResponse.status_code)
+
+
+            return Response({
+                'message': 'Factura generada correctamente'
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'errors': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -15,21 +15,25 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def save(self):
-        name = self.validated_data.get('name')
-        document_type = self.validated_data.get('document_type')
-        document_number = self.validated_data.get('document_number')
-        email = self.validated_data.get('email')
-        password = self.validated_data.get('password')
+        try:
+            name = self.validated_data['name']
+            document_type = self.validated_data['document_type']
+            document_number = self.validated_data['document_number']
+            email = self.validated_data['email']
+            password = self.validated_data['password']
 
-        user = MyUser(
-            document_type=document_type,
-            document_number=document_number,
-            email=email,
-            name=name,
-        )
-        user.set_password(password)
-        user.save()
-        return user
+            user = MyUser(
+                document_type=document_type,
+                document_number=document_number,
+                email=email,
+                name=name,
+            )
+            user.set_password(password)
+            user.save()
+            return user
+        except KeyError as e:
+            print(e, 1000000000000)
+            raise serializers.ValidationError(f'Error: {e}')
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
