@@ -12,7 +12,9 @@ from .views import (
     RegisterView,
     LoginView,
     CreateInvoiceView,
-    GetInvoiceView
+    GetInvoiceView,
+    CreatePaymentView,
+    NotificationPaymentView
 )
 
 
@@ -29,5 +31,7 @@ urlpatterns = [
     path('user/register', RegisterView.as_view()),
     path('user/login', LoginView.as_view()),
     path('invoice/create', CreateInvoiceView.as_view()),
-    path('invoice/get/<int:tipo_de_comprobante>/<str:serie>/<int:numero>', GetInvoiceView.as_view())
+    path('invoice/get/<int:tipo_de_comprobante>/<str:serie>/<int:numero>', GetInvoiceView.as_view()),
+    path('payment/create', CreatePaymentView.as_view()),
+    path('payment/notification', NotificationPaymentView.as_view())
 ]

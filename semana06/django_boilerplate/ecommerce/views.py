@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from .serializers import (
     ProductSerializer,
     ProductModel,
@@ -19,6 +20,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from os import environ
 import requests
 from datetime import datetime
+import mercadopago
 from pprint import pprint
 
 class RegisterView(generics.CreateAPIView):
@@ -316,3 +318,45 @@ class GetInvoiceView(APIView):
             return Response({
                 'errors': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class CreatePaymentView(APIView):
+    def post(self, request):
+        try:
+            mp = mercadopago.SDK(environ.get('MP_ACCESS_TOKEN'))
+
+            preference = {
+                'items': [
+                    {
+                        'id': '1234',
+                        'title': 'Zapatillas Pumba',
+                        'quantity': 1,
+                        'currency_id': 'MXN',
+                        'unit_price': 200,
+                    }
+                ],
+                'notification_url': 'http://127.0.0.1:8000/api/payment/notification'
+            }
+
+            mpResponse = mp.preference().create(preference)
+
+            if mpResponse['status'] != 201:
+                return Response({
+                    'errors': mpResponse['response']['message']
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response(mpResponse['response'], status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'errors': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class NotificationPaymentView(APIView):
+    def post(self, request: Request):
+        print(request.data)
+        print(request.query_params)
+
+        return Response({
+            'ok': True
+        }, status=status.HTTP_200_OK)
