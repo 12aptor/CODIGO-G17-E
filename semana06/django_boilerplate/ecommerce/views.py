@@ -335,7 +335,7 @@ class CreatePaymentView(APIView):
                         'unit_price': 200,
                     }
                 ],
-                'notification_url': 'http://127.0.0.1:8000/api/payment/notification'
+                'notification_url': 'https://0aaa-181-67-29-232.ngrok-free.app/api/payment/notification'
             }
 
             mpResponse = mp.preference().create(preference)
@@ -356,6 +356,8 @@ class NotificationPaymentView(APIView):
     def post(self, request: Request):
         print(request.data)
         print(request.query_params)
+
+        # Crear la confirmación del pago
 
         return Response({
             'ok': True
