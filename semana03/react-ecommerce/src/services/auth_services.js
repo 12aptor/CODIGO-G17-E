@@ -2,7 +2,7 @@ import { API_URL } from "../helpers/constants";
 
 export const postLogin = async (credentials) => {
   try {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${API_URL}/user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

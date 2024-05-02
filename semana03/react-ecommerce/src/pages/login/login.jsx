@@ -26,7 +26,7 @@ export const Login = () => {
         return;
       }
 
-      localStorage.setItem("token", response.access_token);
+      localStorage.setItem("token", response.access);
       navigate("/protected");
     });
   };

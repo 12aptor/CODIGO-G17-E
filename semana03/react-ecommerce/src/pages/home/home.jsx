@@ -64,7 +64,7 @@ export const Home = () => {
             <div key={index} className="min-w-96">
               <picture className="block rounded-lg overflow-hidden aspect-video relative">
                 <img
-                  src="https://picsum.photos/200/300"
+                  src={product.image}
                   alt="Product image"
                   className="w-full"
                 />

@@ -70,3 +70,14 @@ config(
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+## Conectar el proyecto con el repositorio de GitHub
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin <url>
+git push -u origin main
+```
