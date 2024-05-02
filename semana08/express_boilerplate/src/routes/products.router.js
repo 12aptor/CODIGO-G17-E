@@ -5,3 +5,4 @@ export const productsRouter = Router();
 
 productsRouter.post("/create", productsController.createProduct);
 productsRouter.get("/all", productsController.getAllProducts);
+productsRouter.get("/by-id/:id", productsController.getProductById);
