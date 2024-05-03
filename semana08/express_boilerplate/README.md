@@ -65,3 +65,27 @@ node index.js
 ```bash
 npm install -D nodemon
 ```
+
+### Instalar PrismaORM
+
+```bash
+npm install prisma
+```
+
+### Inicializar PrismaORM
+
+```bash
+npx prisma init
+```
+
+### Ejecutar las migraciones
+
+```bash
+npx prisma migrate dev
+```
+
+### Instalar @prisma/client
+
+```bash
+npm install @prisma/client
+```
