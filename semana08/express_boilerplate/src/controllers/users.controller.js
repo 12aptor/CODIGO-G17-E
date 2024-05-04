@@ -5,7 +5,11 @@ import bcrypt from "bcrypt";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        posts: true,
+      },
+    });
 
     return res.status(200).json(users);
   } catch (error) {
