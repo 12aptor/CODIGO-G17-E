@@ -103,7 +103,7 @@ export const updateUser = async (req, res) => {
 
     delete updatedUser.password;
 
-    return res.status(200).json(updateUser);
+    return res.status(200).json(updatedUser);
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({

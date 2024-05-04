@@ -28,6 +28,7 @@ export const signup = async (req, res) => {
       id: newUser.id,
       email: newUser.email,
       name: newUser.name,
+      role: newUser.role,
     };
     const secretKey = process.env.SECRET_KEY;
     const access_token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
@@ -70,6 +71,7 @@ export const login = async (req, res) => {
       id: user.id,
       email: user.email,
       name: user.name,
+      role: user.role,
     };
     const secretKey = process.env.SECRET_KEY;
     const access_token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
