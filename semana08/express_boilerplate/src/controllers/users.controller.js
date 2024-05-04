@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma.js";
-import { CreateUserSchema } from "../schemas/users.schema.js";
+import { CreateUserSchema, UpdateUserSchema } from "../schemas/users.schema.js";
 import { ZodError } from "zod";
+import bcrypt from "bcrypt";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -19,17 +20,25 @@ export const createUser = async (req, res) => {
     const { body } = req;
     const validatedBody = CreateUserSchema.parse(body);
 
-    const user = await prisma.user.create({
-      data: {
-        name: validatedBody.name,
-        last_name: validatedBody.last_name,
+    const user = await prisma.user.findFirst({
+      where: {
         email: validatedBody.email,
-        password: validatedBody.password,
-        role: validatedBody.role,
       },
     });
 
-    return res.status(201).json(user);
+    if (user) {
+      throw new Error("User already exists");
+    }
+
+    validatedBody.password = await bcrypt.hash(validatedBody.password, 10);
+
+    let newUser = await prisma.user.create({
+      data: validatedBody,
+    });
+
+    delete newUser.password;
+
+    return res.status(201).json(newUser);
   } catch (error) {
     if (error instanceof ZodError) {
       return res.status(400).json({
@@ -69,6 +78,7 @@ export const updateUser = async (req, res) => {
   try {
     const { userId } = req.params;
     const { body } = req;
+    const validatedBody = UpdateUserSchema.parse(body);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -80,21 +90,27 @@ export const updateUser = async (req, res) => {
       throw new Error("User not found");
     }
 
-    const updatedUser = await prisma.user.update({
+    if (validatedBody.password) {
+      validatedBody.password = await bcrypt.hash(validatedBody.password, 10);
+    }
+
+    let updatedUser = await prisma.user.update({
       where: {
         id: parseInt(userId),
       },
-      data: {
-        name: body.name,
-        last_name: body.last_name,
-        email: body.email,
-        password: body.password,
-        role: body.role,
-      },
+      data: validatedBody,
     });
 
-    return res.status(200).json(updatedUser);
+    delete updatedUser.password;
+
+    return res.status(200).json(updateUser);
   } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        errors: error.issues,
+      });
+    }
+
     return res.status(500).json({
       errors: error.message,
     });
