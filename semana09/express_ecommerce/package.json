@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
     "dev": "ts-node-dev src/index.ts",
     "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.13.0",
+    "@types/cors": "^2.8.17",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
