@@ -1,4 +1,5 @@
 import { Roles } from "@prisma/client";
+import { ZodIssue } from "zod";
 
 export interface IPayload {
   id: number;
@@ -12,5 +13,5 @@ export interface ISignupResponse {
 }
 
 export interface IErrorResponse {
-  errors: string;
+  errors: string | ZodIssue[];
 }
