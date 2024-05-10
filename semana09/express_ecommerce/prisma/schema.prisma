@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Roles {
+  USER
+  CLIENT
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  last_name  String
+  email      String   @unique
+  password   String   @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  status     Boolean  @default(true)
+  role       Roles    @default(USER)
+  sale       Sale[]
+
+  @@map("users")
+}
+
+model Product {
+  id          Int          @id @default(autoincrement())
+  name        String
+  image       String
+  description String
+  price       Float
+  stock       Int
+  status      Boolean      @default(true)
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  saleDetail  SaleDetail[]
+
+  @@map("products")
+}
+
+model Sale {
+  id         Int          @id @default(autoincrement())
+  total      Float
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  user_id    Int
+  user       User         @relation(fields: [user_id], references: [id])
+  saleDetail SaleDetail[]
+
+  @@map("sales")
+}
+
+model SaleDetail {
+  id         Int     @id @default(autoincrement())
+  quantity   Int
+  price      Float
+  total      Float
+  product_id Int
+  product    Product @relation(fields: [product_id], references: [id])
+  sale_id    Int
+  sale       Sale    @relation(fields: [sale_id], references: [id])
+
+  @@map("sales_details")
+}
