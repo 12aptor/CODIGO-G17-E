@@ -1,4 +1,4 @@
-import { Roles } from "@prisma/client";
+import { Roles, User } from "@prisma/client";
 import { ZodIssue } from "zod";
 
 export interface IPayload {
@@ -15,3 +15,7 @@ export interface ISignupResponse {
 export interface IErrorResponse {
   errors: string | ZodIssue[];
 }
+
+export type TCreateUserResponse = Omit<User, "password">;
+
+export type TGetUserByIdResponse = Pick<User, "id" | "name">;
