@@ -82,6 +82,11 @@ const getUserById = (_req, res) => __awaiter(void 0, void 0, void 0, function* (
             where: {
                 id: parseInt(userId),
             },
+            select: {
+                id: true,
+                name: true,
+                password: true,
+            },
         });
         if (!user) {
             throw new Error("User not found");
