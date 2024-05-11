@@ -13,6 +13,7 @@ npm install -D @types/cors
 npm install multer
 npm install -D @types/multer
 npm install @aws-sdk/client-s3
+npm install @aws-sdk/s3-request-presigner
 ```
 
 ## Agregamos tsc al package.json

@@ -6,7 +6,38 @@ import { CreateProductSchema } from "../schemas/products.schema";
 import { ZodError } from "zod";
 import { prisma } from "../config/prisma";
 import { s3Client } from "../config/aws";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+export const getAllProducts = async (_req: Request, res: Response) => {
+  try {
+    const products = await prisma.product.findMany();
+
+    let productsWithSignedUrl = [];
+    for (let index = 0; index < products.length; index++) {
+      const product = products[index];
+
+      productsWithSignedUrl.push({
+        ...product,
+        image: await getSignedUrl(
+          s3Client,
+          new GetObjectCommand({
+            Bucket: "ecommerce-100",
+            Key: product.image,
+          })
+        ),
+      });
+    }
+
+    return res.status(200).json(productsWithSignedUrl);
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        errors: error.message,
+      });
+    }
+  }
+};
 
 export const createProduct = async (_req: Request, res: Response) => {
   try {

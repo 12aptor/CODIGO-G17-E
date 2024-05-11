@@ -7,6 +7,7 @@ const upload = multer({ storage: storage });
 
 export const productsRouter = Router();
 
+productsRouter.get("/all", productsController.getAllProducts);
 productsRouter.post(
   "/create",
   upload.single("image"),
