@@ -22,13 +22,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersRouter = void 0;
+exports.productsRouter = void 0;
 const express_1 = require("express");
-const usersController = __importStar(require("../controllers/users.controller"));
-exports.usersRouter = (0, express_1.Router)();
-exports.usersRouter.get("/all", usersController.getAllUsers);
-exports.usersRouter.post("/create", usersController.createUser);
-exports.usersRouter.get("/by-id/:userId", usersController.getUserById);
-exports.usersRouter.put("/update/:userId", usersController.updateUser);
-exports.usersRouter.delete("/update/:userId", usersController.deleteUser);
+const productsController = __importStar(require("../controllers/products.controller"));
+const multer_1 = __importDefault(require("multer"));
+const storage = multer_1.default.memoryStorage();
+const upload = (0, multer_1.default)({ storage: storage });
+exports.productsRouter = (0, express_1.Router)();
+exports.productsRouter.get("/all", productsController.getAllProducts);
+exports.productsRouter.post("/create", upload.single("image"), productsController.createProduct);
