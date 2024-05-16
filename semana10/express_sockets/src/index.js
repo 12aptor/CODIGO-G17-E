@@ -16,9 +16,19 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
+  socket.on("join", (room) => {
+    console.log("Usuario conectado a la sala: ", room);
+    socket.join(room);
+  });
+
   socket.on("chat", (message) => {
-    io.emit("chat", message)
-  })
+    // io.emit("chat", message);
+    io.to(message.room).emit("chat", message);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Usuario desconectado");
+  });
 });
 
 server.listen(port, () => {
