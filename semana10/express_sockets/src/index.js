@@ -2,8 +2,14 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { testDb } from "./mongo.js";
+import cors from "cors";
 
 const app = express();
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500",
+  })
+);
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -21,7 +27,7 @@ app.get("/messages/:room", async (req, res) => {
   try {
     const room = req.params.room;
 
-    const collection = await testDb.collection("messages");
+    const collection = testDb.collection("messages");
     const messages = await collection
       .find({
         room: room,
@@ -40,9 +46,15 @@ io.on("connection", (socket) => {
     socket.join(room);
   });
 
-  socket.on("chat", (message) => {
-    // io.emit("chat", message);
-    io.to(message.room).emit("chat", message);
+  socket.on("chat", async (message) => {
+    try {
+      // io.emit("chat", message);
+      const collection = testDb.collection("messages");
+      await collection.insertOne(message);
+      io.to(message.room).emit("chat", message);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   socket.on("disconnect", () => {

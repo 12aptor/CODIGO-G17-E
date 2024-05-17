@@ -8,9 +8,28 @@ const inputMessage = document.getElementById("inputMessage");
 const chat = document.getElementById("chat");
 const room = document.getElementById("room");
 const rooms = document.getElementById("rooms");
+const messagesList = document.getElementById("messagesList");
 
 let roomName = "";
-const joinRoom = (selectedRoom) => {
+const joinRoom = async (selectedRoom) => {
+  const prevMessages = await fetch(
+    "http://localhost:3000/messages/" + selectedRoom
+  );
+
+  if (!prevMessages.ok) {
+    alert("Error al obtener los mensajes");
+    return;
+  }
+
+  const prevMessagesJson = await prevMessages.json();
+
+  for (let index = 0; index < prevMessagesJson.length; index++) {
+    const _message = prevMessagesJson[index];
+    const li = document.createElement("li");
+    li.textContent = `${_message.username}: ${_message.message}`;
+    messagesList.appendChild(li);
+  }
+
   const usernameValue = username.value;
   if (usernameValue.trim() === "") {
     alert("Por favor, ingrese un nombre de usuario");
@@ -37,17 +56,16 @@ chat.addEventListener("submit", (e) => {
 
   if (message.trim() !== "") {
     socket.emit("chat", {
-      message,
-      user: username.value,
+      message: message,
       room: roomName,
+      username: username.value,
     });
   }
 });
 
 socket.on("chat", (message) => {
-  const messagesList = document.getElementById("messagesList");
   const li = document.createElement("li");
-  li.textContent = `${message.user}: ${message.message}`;
+  li.textContent = `${message.username}: ${message.message}`;
   messagesList.appendChild(li);
   inputMessage.value = "";
 });
