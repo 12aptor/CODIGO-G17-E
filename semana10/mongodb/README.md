@@ -77,4 +77,41 @@ db.users.deleteMany({ age: { $lt: 30 } });
 db.users.deleteMany({});
 ```
 
-## 
+## Eliminar colección `users`
+
+```javascript
+db.users.drop();
+```
+
+## Eliminar base de datos `test`
+
+```javascript
+db.dropDatabase();
+```
+
+## Contar documentos de la colección `users`
+
+```javascript
+db.users.count();
+// ó
+db.users.count({ age: { $gt: 30 } });
+```
+
+## Ordenar documentos de la colección `users`
+
+```javascript
+db.users.find().sort({ age: 1 });
+db.users.find().sort({ age: -1 });
+```
+
+## Limitar documentos de la colección `users`
+
+```javascript
+db.users.find().limit(3);
+```
+
+## Saltar documentos de la colección `users`
+
+```javascript
+db.users.find().skip(3);
+```

@@ -1,7 +1,7 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { testDb } from "./mongo.js";
+// import { testDb } from "./mongo.js";
 import cors from "cors";
 
 const app = express();
@@ -25,16 +25,17 @@ app.get("/", async (req, res) => {
 
 app.get("/messages/:room", async (req, res) => {
   try {
-    const room = req.params.room;
+    // const room = req.params.room;
 
-    const collection = testDb.collection("messages");
-    const messages = await collection
-      .find({
-        room: room,
-      })
-      .toArray();
+    // const collection = testDb.collection("messages");
+    // const messages = await collection
+    //   .find({
+    //     room: room,
+    //   })
+    //   .toArray();
 
-    return res.status(200).json(messages);
+    // return res.status(200).json(messages);
+    return res.status(200).json([]);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -49,8 +50,8 @@ io.on("connection", (socket) => {
   socket.on("chat", async (message) => {
     try {
       // io.emit("chat", message);
-      const collection = testDb.collection("messages");
-      await collection.insertOne(message);
+      // const collection = testDb.collection("messages");
+      // await collection.insertOne(message);
       io.to(message.room).emit("chat", message);
     } catch (error) {
       console.log(error);
